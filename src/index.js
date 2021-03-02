@@ -6,13 +6,32 @@ const ramenForm = document.querySelector('form#ramen-rating')
 const newRamen = document.querySelector('form#new-ramen')
 
 
+function htmlCode (ramenObj) {
+
+    ramenDetail.innerHTML = `
+    <img class="detail-image" src=${ramenObj.image} alt=${ramenObj.name} />
+    <h2 class="name">${ramenObj.name}</h2>
+    <h3 class="restaurant">${ramenObj.restaurant}</h3>`
+
+    ramenForm.innerHTML = `
+    <label for="rating">Rating: </label>
+    <input type="text" name="rating" id="rating" value=${ramenObj.rating} />
+    <label for="comment">Comment: </label>
+    <textarea name="comment" id="comment">${ramenObj.comment}</textarea>
+    <input type="submit" value="Update" />
+    <button class="button" id="${ramenObj.id}"> Delete</button>`
+    
+    ramenForm.dataset.id = ramenObj.id 
+}
+
 function loadOneRamen(ramenObj){
 
     const img = document.createElement('img')
     img.dataset.id = ramenObj.id
     img.src = ramenObj.image
 
-    ramenDiv.append(img)
+    ramenDiv.append(img)   
+
 }
 
 function loadAllRamen(){ 
@@ -20,37 +39,11 @@ function loadAllRamen(){
         .then(res => res.json())
         .then( ramens => {
             ramens.forEach( ramen => loadOneRamen(ramen))
-            
-            ramenDetail.innerHTML = `
-            <img class="detail-image" src=${ramens[0].image} alt=${ramens[0].name} />
-            <h2 class="name">${ramens[0].name}</h2>
-            <h3 class="restaurant">${ramens[0].restaurant}</h3>`
 
-            ramenForm.innerHTML = `
-            <label for="rating">Rating: </label>
-            <input type="text" name="rating" id="rating" value=${ramens[0].rating} />
-            <label for="comment">Comment: </label>
-            <textarea name="comment" id="comment">${ramens[0].comment}</textarea>
-            <input type="submit" value="Update" />
-            <button type="button" class = "delete" id = ${ramens[0].id}>Delete Me!</button>`
-            
-            const deleteBut = document.querySelector('button.delete')
-            deleteBut.addEventListener('click', function (event){
-                event.preventDefault()
-                
-                    fetch(`http://localhost:3000/ramens/${event.target.dataset.id}`, {
-                     method: 'DELETE',
-                        
-                        })
-    
-                            .then(res => res.json())
-                            .then(ramenObj => ramenObj.remove())
-
-})
+            htmlCode(ramens[0])    
         })
 
 }
-
 
 ramenDiv.addEventListener('click', function (event) {
     
@@ -58,26 +51,24 @@ ramenDiv.addEventListener('click', function (event) {
         .then(res => res.json())
         .then(ramenObj => {
             
-            ramenDetail.innerHTML = `
-            <img class="detail-image" src=${ramenObj.image} alt=${ramenObj.name} />
-            <h2 class="name">${ramenObj.name}</h2>
-            <h3 class="restaurant">${ramenObj.restaurant}</h3>`
+            htmlCode(ramenObj)
+
+            const deleteButton = document.querySelector('button.button')
+
+            deleteButton.addEventListener('click', function (event){
+                console.log(event.target.id)
+                event.preventDefault()
+
+                    fetch(`http://localhost:3000/ramens/${ramenObj.id}`, {
+                     method: 'DELETE',
+                        })
         
-            ramenForm.dataset.id = ramenObj.id 
-
-            ramenForm.innerHTML = `
-            <label for="rating">Rating: </label>
-            <input type="text" name="rating" id="rating" value=${ramenObj.rating} />
-            <label for="comment">Comment: </label>
-            <textarea name="comment" id="comment">${ramenObj.comment}</textarea>
-            <input type="submit" value="Update" />
-            <button type="button" class = "delete" id= ${ramenObj.id}>Delete Me!</button>`
+                            .then(res => res.json())
+                            .then(ramenObj => { location.reload()})
             
-
         })
-
-    
-})
+        })       
+    })
 
 ramenForm.addEventListener('submit', function (event){
     event.preventDefault()
@@ -130,4 +121,3 @@ newRamen.addEventListener('submit',function (event){
 
 
 loadAllRamen()
-
