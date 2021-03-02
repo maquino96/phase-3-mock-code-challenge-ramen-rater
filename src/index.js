@@ -55,17 +55,15 @@ ramenDiv.addEventListener('click', function (event) {
 
             const deleteButton = document.querySelector('button.button')
 
-            deleteButton.addEventListener('click', function (event){
-                console.log(event.target.id)
-                event.preventDefault()
-
-                    fetch(`http://localhost:3000/ramens/${ramenObj.id}`, {
-                     method: 'DELETE',
-                        })
-        
-                            .then(res => res.json())
-                            .then(ramenObj => { location.reload()})
+        deleteButton.addEventListener('click', function (event){
             
+            console.log(event.target.id)
+            event.preventDefault()
+
+            fetch(`http://localhost:3000/ramens/${ramenObj.id}`, {method: 'DELETE',})
+                .then(res => res.json())
+                .then(ramenObj => { location.reload()})
+        
         })
         })       
     })
