@@ -72,7 +72,7 @@ form {
 }
 
 input,
-textarea {
+textarea{
   font-size: 1rem;
   border: 1px solid black;
   background-color: white;
@@ -81,7 +81,7 @@ textarea {
   width: 100%;
 }
 
-input[type="submit"] {
+input[type="submit"],button {
   color: white;
   border: 1px solid white;
   background-color: black;
@@ -89,11 +89,11 @@ input[type="submit"] {
   transition: all 0.3s;
 }
 
-input[type="submit"]:active {
+input[type="submit"]:active{
   background-color: gray;
 }
 
-form h4 {
+form h4, button {
   width: 100%;
   padding: 0.25rem;
   margin: 0.5rem 0;

@@ -1,10 +1,7 @@
-// write your code here
-
 const ramenDiv = document.querySelector('div#ramen-menu')
 const ramenDetail = document.querySelector('div#ramen-detail')
 const ramenForm = document.querySelector('form#ramen-rating')
 const newRamen = document.querySelector('form#new-ramen')
-
 
 function htmlCode (ramenObj) {
 
@@ -31,7 +28,6 @@ function loadOneRamen(ramenObj){
     img.src = ramenObj.image
 
     ramenDiv.append(img)   
-
 }
 
 function loadAllRamen(){ 
@@ -39,10 +35,29 @@ function loadAllRamen(){
         .then(res => res.json())
         .then( ramens => {
             ramens.forEach( ramen => loadOneRamen(ramen))
-
-            htmlCode(ramens[0])    
+            
+            ramenSpotlight(ramens[0])  
         })
+}
 
+function ramenSpotlight (ramenObj) {
+    htmlCode(ramenObj)
+
+    //  repeated the delete code for when the page is initially loaded.
+
+    const deleteButton = document.querySelector('button.button')
+
+    deleteButton.addEventListener('click', function (event){
+        
+        console.log(event.target.id)
+        event.preventDefault()
+
+        fetch(`http://localhost:3000/ramens/${ramenObj.id}`, {method: 'DELETE',})
+            .then(res => res.json())
+            .then(ramenObj => { location.reload()})
+    
+    })
+    
 }
 
 ramenDiv.addEventListener('click', function (event) {
@@ -50,10 +65,11 @@ ramenDiv.addEventListener('click', function (event) {
     fetch(`http://localhost:3000/ramens/${event.target.dataset.id}`)
         .then(res => res.json())
         .then(ramenObj => {
-            
-            htmlCode(ramenObj)
+            htmlCode(ramenObj) 
 
-            const deleteButton = document.querySelector('button.button')
+        // The below code only works after clicking on a menu item
+
+        const deleteButton = document.querySelector('button.button')
 
         deleteButton.addEventListener('click', function (event){
             
@@ -66,7 +82,7 @@ ramenDiv.addEventListener('click', function (event) {
         
         })
         })       
-    })
+})
 
 ramenForm.addEventListener('submit', function (event){
     event.preventDefault()
@@ -84,16 +100,7 @@ ramenForm.addEventListener('submit', function (event){
         body: JSON.stringify(updatedRamen)})
 
         .then( res => res.json())
-        .then( updatedRamen => {
-            ramenForm.innerHTML = `
-            <label for="rating">Rating: </label>
-            <input type="text" name="rating" id="rating" value=${updatedRamen.rating} />
-            <label for="comment">Comment: </label>
-            <textarea name="comment" id="comment">${updatedRamen.comment}</textarea>
-            <input type="submit" value="Update" />`
-
-        })
-
+        .then( updatedRamen => { htmlCode(updatedRamen)})
 })
 
 newRamen.addEventListener('submit',function (event){
@@ -116,6 +123,5 @@ newRamen.addEventListener('submit',function (event){
     .then(ramenObj => loadOneRamen(ramenObj))
     event.target.reset()
 })
-
 
 loadAllRamen()
